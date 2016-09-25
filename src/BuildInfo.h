@@ -18,63 +18,37 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-// SOX includes
-#include <sox.h>
+#pragma once
 
-// Local includes
-#include "Builder.h"
-#include "BuildInfo.h"
-#include "ConfigFile.h"
+#include "GlobalSettings.h"
+#include "TrackSettings.h"
 
-struct SoxInitializer
+namespace msu1
 {
-    SoxInitializer()
-    : _initResult(0)
+    class BuildInfo
     {
-        _initResult = sox_init();
-    }
-    ~SoxInitializer()
-    {
-        sox_quit();
-    }
+    public:
+        BuildInfo();
 
-    bool IsValid() const
-    {
-        return _initResult == SOX_SUCCESS;
-    }
+        int Normalization() const;
+        bool UseDithering() const;
+        std::string const& Filename() const { return _track.Filename; }
+        std::string const& OutputPrefix() const { return _globalSettings.OutputPrefix; }
+        int TrackIndex() const { return _track.TrackIndex; }
+        int Loop() const;
 
-private:
-    int _initResult;
-};
+        Baroque::Optional<int> TrimStart() const { return _track.TrimStart; }
+        Baroque::Optional<int> TrimEnd() const { return _track.TrimEnd; }
 
-int main(int argc, char** argv)
-{
-    SoxInitializer soxInit;
-    if (!soxInit.IsValid())
-    {
-        fprintf(stderr, "SOX initialization failed !\n");
-        return 1;
-    }
+        void SetGlobalSettings(GlobalSettings value) { _globalSettings = value; }
+        void SetTrackSettings(TrackSettings value) { _track = value; }
 
-    msu1::ConfigFile batchConfigFile(argv[1]);
+        bool KeepWav() const { return _keepWav; }
+        void SetKeepWav(bool value) { _keepWav = value; }
 
-    if (batchConfigFile)
-    {
-        for (auto& track : batchConfigFile.Tracks())
-        {
-            msu1::BuildInfo trackBuildInfo;
-            trackBuildInfo.SetGlobalSettings(batchConfigFile.GlobalSettings());
-            trackBuildInfo.SetTrackSettings(track);
-            trackBuildInfo.SetKeepWav(true);
-
-            msu1::Builder builder(trackBuildInfo);
-            builder.Build();
-        }
-    }
-    else
-    {
-        return 1;
-    }
-
-    return 0;
+    private:
+        GlobalSettings _globalSettings;
+        TrackSettings _track;
+        bool _keepWav = false;
+    };
 }

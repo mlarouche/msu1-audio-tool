@@ -18,63 +18,41 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-// SOX includes
-#include <sox.h>
-
-// Local includes
-#include "Builder.h"
 #include "BuildInfo.h"
-#include "ConfigFile.h"
 
-struct SoxInitializer
+namespace msu1
 {
-    SoxInitializer()
-    : _initResult(0)
+    BuildInfo::BuildInfo()
     {
-        _initResult = sox_init();
-    }
-    ~SoxInitializer()
-    {
-        sox_quit();
     }
 
-    bool IsValid() const
+    int BuildInfo::Normalization() const
     {
-        return _initResult == SOX_SUCCESS;
-    }
-
-private:
-    int _initResult;
-};
-
-int main(int argc, char** argv)
-{
-    SoxInitializer soxInit;
-    if (!soxInit.IsValid())
-    {
-        fprintf(stderr, "SOX initialization failed !\n");
-        return 1;
-    }
-
-    msu1::ConfigFile batchConfigFile(argv[1]);
-
-    if (batchConfigFile)
-    {
-        for (auto& track : batchConfigFile.Tracks())
+        if (_track.Normalization.HasValue())
         {
-            msu1::BuildInfo trackBuildInfo;
-            trackBuildInfo.SetGlobalSettings(batchConfigFile.GlobalSettings());
-            trackBuildInfo.SetTrackSettings(track);
-            trackBuildInfo.SetKeepWav(true);
-
-            msu1::Builder builder(trackBuildInfo);
-            builder.Build();
+            return _track.Normalization.Value();
         }
-    }
-    else
-    {
-        return 1;
+
+        return _globalSettings.Normalization;
     }
 
-    return 0;
+    bool BuildInfo::UseDithering() const
+    {
+        if (_track.UseDithering.HasValue())
+        {
+            return _track.UseDithering.Value();
+        }
+
+        return _globalSettings.UseDithering;
+    }
+
+    int BuildInfo::Loop() const
+    {
+        if (_track.Loop.HasValue())
+        {
+            return _track.Loop.Value();
+        }
+
+        return 0;
+    }
 }

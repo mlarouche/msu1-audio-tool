@@ -18,63 +18,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-// SOX includes
-#include <sox.h>
+#pragma once
 
-// Local includes
-#include "Builder.h"
-#include "BuildInfo.h"
-#include "ConfigFile.h"
+// STL includes
+#include <string>
 
-struct SoxInitializer
+namespace msu1
 {
-    SoxInitializer()
-    : _initResult(0)
+    struct GlobalSettings
     {
-        _initResult = sox_init();
-    }
-    ~SoxInitializer()
-    {
-        sox_quit();
-    }
+        GlobalSettings();
 
-    bool IsValid() const
-    {
-        return _initResult == SOX_SUCCESS;
-    }
-
-private:
-    int _initResult;
-};
-
-int main(int argc, char** argv)
-{
-    SoxInitializer soxInit;
-    if (!soxInit.IsValid())
-    {
-        fprintf(stderr, "SOX initialization failed !\n");
-        return 1;
-    }
-
-    msu1::ConfigFile batchConfigFile(argv[1]);
-
-    if (batchConfigFile)
-    {
-        for (auto& track : batchConfigFile.Tracks())
-        {
-            msu1::BuildInfo trackBuildInfo;
-            trackBuildInfo.SetGlobalSettings(batchConfigFile.GlobalSettings());
-            trackBuildInfo.SetTrackSettings(track);
-            trackBuildInfo.SetKeepWav(true);
-
-            msu1::Builder builder(trackBuildInfo);
-            builder.Build();
-        }
-    }
-    else
-    {
-        return 1;
-    }
-
-    return 0;
+        int Normalization;
+        bool UseDithering;
+        std::string OutputPrefix;
+    };
 }

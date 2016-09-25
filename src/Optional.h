@@ -18,63 +18,65 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-// SOX includes
-#include <sox.h>
+#pragma once
 
-// Local includes
-#include "Builder.h"
-#include "BuildInfo.h"
-#include "ConfigFile.h"
-
-struct SoxInitializer
+namespace Baroque
 {
-    SoxInitializer()
-    : _initResult(0)
+    template<typename T>
+    class Optional
     {
-        _initResult = sox_init();
-    }
-    ~SoxInitializer()
-    {
-        sox_quit();
-    }
-
-    bool IsValid() const
-    {
-        return _initResult == SOX_SUCCESS;
-    }
-
-private:
-    int _initResult;
-};
-
-int main(int argc, char** argv)
-{
-    SoxInitializer soxInit;
-    if (!soxInit.IsValid())
-    {
-        fprintf(stderr, "SOX initialization failed !\n");
-        return 1;
-    }
-
-    msu1::ConfigFile batchConfigFile(argv[1]);
-
-    if (batchConfigFile)
-    {
-        for (auto& track : batchConfigFile.Tracks())
+    public:
+        Optional()
+        : _hasValue(false)
         {
-            msu1::BuildInfo trackBuildInfo;
-            trackBuildInfo.SetGlobalSettings(batchConfigFile.GlobalSettings());
-            trackBuildInfo.SetTrackSettings(track);
-            trackBuildInfo.SetKeepWav(true);
-
-            msu1::Builder builder(trackBuildInfo);
-            builder.Build();
         }
-    }
-    else
-    {
-        return 1;
-    }
 
-    return 0;
+        explicit Optional(T value)
+        {
+            Assign(value);
+        }
+
+        Optional(const Optional &copy)
+        : _hasValue(copy._hasValue)
+        , _value(copy._value)
+        {
+        }
+
+        Optional& operator=(const Optional& other)
+        {
+            if (this != &other)
+            {
+                _hasValue = other._hasValue;
+                _value = other._value;
+            }
+
+            return *this;
+        }
+
+        void operator=(T value)
+        {
+            Assign(value);
+        }
+
+        void Clear()
+        {
+            _hasValue = false;
+            _value = T();
+        }
+
+        bool HasValue() const { return _hasValue; }
+
+        T Value() const { return _value; }
+
+    private:
+        void Assign(T value)
+        {
+            _value = value;
+            _hasValue = true;
+        }
+
+    private:
+        bool _hasValue;
+        T _value;
+    };
 }
