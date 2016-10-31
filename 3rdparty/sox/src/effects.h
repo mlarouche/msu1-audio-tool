@@ -88,3 +88,4 @@
   EFFECT(upsample)
   EFFECT(vad)
   EFFECT(vol)
+  EFFECT(nongnunormalize)

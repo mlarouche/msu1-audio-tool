@@ -39,7 +39,10 @@ namespace msu1
         }
         ~SoxFormatWrapper()
         {
-            sox_close(_format);
+            if (_format)
+            {
+                sox_close(_format);
+            }
         }
 
         operator sox_format_t*()
@@ -64,7 +67,10 @@ namespace msu1
 
         ~SoxChainWrapper()
         {
-            sox_delete_effects_chain(_chain);
+            if (_chain)
+            {
+                sox_delete_effects_chain(_chain);
+            }
         }
 
         operator sox_effects_chain_t*()
@@ -152,6 +158,16 @@ namespace msu1
 
             sox_effect_options(effect, trimParameters.size(), trimParameters.data());
 
+            sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
+
+            free(effect);
+        }
+
+        if (_info.Normalization() != 0)
+        {
+            effect = sox_create_effect(sox_find_effect("nongnunormalize"));
+            args[0] = Baroque::RawStringFormat("%d", _info.Normalization());
+            sox_effect_options(effect, 1, args);
             sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
 
             free(effect);

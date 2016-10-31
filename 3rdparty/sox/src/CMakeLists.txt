@@ -74,6 +74,7 @@ set(effects_srcs
   upsample
   vad
   vol
+  nongnunormalize
 )
 set(formats_srcs
   8svx
