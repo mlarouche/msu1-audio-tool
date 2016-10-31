@@ -145,12 +145,17 @@ namespace msu1
             free(effect);
         }
 
-        if (_info.TrimStart().HasValue())
+        if (_info.TrimStart().HasValue() || _info.TrimEnd().HasValue())
         {
             effect = sox_create_effect(sox_find_effect("trim"));
 
             std::vector<char*> trimParameters;
-            trimParameters.emplace_back(Baroque::RawStringFormat("=%us", _info.TrimStart().Value()));
+
+            if (_info.TrimStart().HasValue())
+            {
+                trimParameters.emplace_back(Baroque::RawStringFormat("%us", _info.TrimStart().Value()));
+            }
+
             if (_info.TrimEnd().HasValue())
             {
                 trimParameters.emplace_back(Baroque::RawStringFormat("=%us", _info.TrimEnd().Value()));
@@ -205,7 +210,12 @@ namespace msu1
         if (outputFile)
         {
             fwrite("MSU1", 4, 1, outputFile);
+
             int loopPoint = _info.Loop();
+            if (loopPoint > 0 && _info.LoopIsRelativeToSource() && _info.TrimStart().HasValue())
+            {
+                loopPoint -= _info.TrimStart().Value();
+            }
             fwrite(reinterpret_cast<void*>(&loopPoint), sizeof(int), 1, outputFile);
 
             size_t samplesRead = 0;

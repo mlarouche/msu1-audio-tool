@@ -36,6 +36,7 @@ namespace msu1
         std::string const& OutputPrefix() const { return _globalSettings.OutputPrefix; }
         int TrackIndex() const { return _track.TrackIndex; }
         int Loop() const;
+        bool LoopIsRelativeToSource() const;
 
         Baroque::Optional<int> TrimStart() const { return _track.TrimStart; }
         Baroque::Optional<int> TrimEnd() const { return _track.TrimEnd; }

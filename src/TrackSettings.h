@@ -39,5 +39,6 @@ namespace msu1
         Baroque::Optional<int> Loop;
         Baroque::Optional<int> Normalization;
         Baroque::Optional<bool> UseDithering;
+        Baroque::Optional<bool> LoopIsRelativeToSource;
     };
 }

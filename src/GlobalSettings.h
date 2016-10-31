@@ -32,5 +32,6 @@ namespace msu1
         int Normalization;
         bool UseDithering;
         std::string OutputPrefix;
+        bool LoopIsRelativeToSource;
     };
 }

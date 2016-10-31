@@ -23,8 +23,9 @@
 namespace msu1
 {
     GlobalSettings::GlobalSettings()
-        : Normalization(0)
-        , UseDithering(false)
+    : Normalization(0)
+    , UseDithering(false)
+    , LoopIsRelativeToSource(true)
     {
     }
 }

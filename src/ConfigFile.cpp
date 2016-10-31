@@ -85,6 +85,7 @@ namespace msu1
         parseInt(json, "Normalization", _globalSettings.Normalization);
         parseBool(json, "UseDithering", _globalSettings.UseDithering);
         parseString(json, "OutputPrefix", _globalSettings.OutputPrefix);
+        parseBool(json, "LoopIsRelativeToSource", _globalSettings.LoopIsRelativeToSource);
 
         if (_globalSettings.OutputPrefix.empty())
         {
@@ -110,6 +111,7 @@ namespace msu1
                 parseOptionalInt(item, "Loop", track.Loop);
                 parseOptionalInt(item, "Normalization", track.Normalization);
                 parseOptionalBool(item, "UseDithering", track.UseDithering);
+                parseOptionalBool(item, "LoopIsRelativeToSource", track.LoopIsRelativeToSource);
 
                 if (track.Filename.empty())
                 {

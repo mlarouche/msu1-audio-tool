@@ -86,7 +86,7 @@ static int create(sox_effect_t* effp, int argc, char** argv)
 static int start(sox_effect_t * effect)
 {
     priv_t* p = (priv_t*)effect->priv;
-    int channel = 0;
+    unsigned int channel = 0;
     int bytes_per_sample = 0;
 
     p->tempFile = lsx_tmpfile();
@@ -125,7 +125,7 @@ static int flow(sox_effect_t* effect, const sox_sample_t* inputBuffer,
     priv_t* p = (priv_t*)effect->priv;
     size_t bufferLength = 0;
     sox_sample_t sample = 0;
-    int channel = 0;
+    unsigned int channel = 0;
     double power = 0;
     SOX_SAMPLE_LOCALS;
 
@@ -189,7 +189,7 @@ static void setup_drain(sox_effect_t * effect)
     int srcBytesPerSample = 0;
     int destBytesPerSample = 0;
     double power = 0.0;
-    int channel = 0;
+    unsigned int channel = 0;
 
     srcBytesPerSample = (effect->in_encoding->bits_per_sample - 1) / 8 + 1;
     destBytesPerSample = (effect->out_encoding->bits_per_sample - 1) / 8 + 1;
@@ -229,7 +229,7 @@ static int drain(sox_effect_t * effect, sox_sample_t * outputBuffer, size_t * ou
     size_t length = 0;
     int result = SOX_SUCCESS;
     sox_sample_t sample = 0;
-    SOX_SAMPLE_LOCALS;
+
     if (!p->isResultSetuped)
     {
         setup_drain(effect);
@@ -255,7 +255,7 @@ static int drain(sox_effect_t * effect, sox_sample_t * outputBuffer, size_t * ou
 static int stop(sox_effect_t * effect)
 {
     priv_t * p = (priv_t *)effect->priv;
-    int channel = 0;
+    unsigned int channel = 0;
 
     fclose(p->tempFile);
 

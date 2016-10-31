@@ -47,8 +47,15 @@ private:
     int _initResult;
 };
 
+void showpause()
+{
+    system("pause");
+}
+
 int main(int argc, char** argv)
 {
+    //atexit(showpause);
+
     SoxInitializer soxInit;
     if (!soxInit.IsValid())
     {

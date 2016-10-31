@@ -55,4 +55,14 @@ namespace msu1
 
         return 0;
     }
+
+    bool BuildInfo::LoopIsRelativeToSource() const
+    {
+        if (_track.LoopIsRelativeToSource.HasValue())
+        {
+            return _track.LoopIsRelativeToSource.Value();
+        }
+
+        return _globalSettings.LoopIsRelativeToSource;
+    }
 }
