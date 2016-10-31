@@ -1,0 +1,236 @@
+{
+    "Normalization": -18,
+    "UseDithering": true,
+    "LoopIsRelativeToSource": false,
+    "OutputPrefix": "megaman7_msu1",
+    "Tracks": [
+        {
+            "Filename": "01_Intro_1.wav",
+            "TrackIndex": 1,
+            "TrimStart": 4890,
+            "TrimEnd": 1864461,
+            "Loop": 374656
+        },
+        {
+            "Filename": "02_Intro_2.wav",
+            "TrackIndex": 34,
+            "TrimEnd": 4673
+        },
+        {
+            "Filename": "03_Title.wav",
+            "TrackIndex": 2,
+            "TrimStart": 3667,
+            "TrimEnd": 613154
+        },
+        {
+            "Filename": "04_Opening_Stage.wav",
+            "TrackIndex": 3,
+            "TrimStart": 10470,
+            "TrimEnd": 2433861,
+            "Loop": 184281
+        },
+        {
+            "Filename": "05_Bass_Treble.wav",
+            "TrackIndex": 22,
+            "TrimStart": 10269,
+            "TrimEnd": 2047597,
+            "Loop": 468390
+        },
+        {
+            "Filename": "06_Password.wav",
+            "TrackIndex": 30,
+            "TrimStart": 4677,
+            "TrimEnd": 513632,
+            "Loop": 36998
+        },
+        {
+            "Filename": "07_Stage_Select.wav",
+            "TrackIndex": 4,
+            "TrimStart": 5651,
+            "TrimEnd": 379320
+        },
+        {
+            "Filename": "08_Stage_Start.wav",
+            "TrackIndex": 21,
+            "TrimStart": 4096,
+            "TrimEnd": 352580
+        },
+        {
+            "Filename": "09_Freeze_Man.wav",
+            "TrackIndex": 5,
+            "TrimStart": 7029,
+            "TrimEnd": 2942038,
+            "Loop": 42561
+        },
+        {
+            "Filename": "10_Burst_Man.wav",
+            "TrackIndex": 12,
+            "TrimStart": 8906,
+            "TrimEnd": 2084007
+        },
+        {
+            "Filename": "11_Cloud_Man.wav",
+            "TrackIndex": 6,
+            "TrimStart": 11667,
+            "TrimEnd": 4833644,
+            "Loop": 389768
+        },
+        {
+            "Filename": "12_Junk_Man.wav",
+            "TrackIndex": 7,
+            "TrimStart": 6643,
+            "TrimEnd": 2809261,
+            "Loop": 541168
+        },
+        {
+            "Filename": "13_Robot_Museum.wav",
+            "TrackIndex": 13,
+            "TrimStart": 6978,
+            "TrimEnd": 2085026,
+            "Loop": 241239
+        },
+        {
+            "Filename": "14_Shade_Man.wav",
+            "TrackIndex": 11,
+            "TrimStart": 5696,
+            "TrimEnd": 2653372,
+            "Loop": 883430
+        },
+        {
+            "Filename": "15_Turbo_Man.wav",
+            "TrackIndex": 8,
+            "TrimStart": 8413,
+            "TrimEnd": 1698813,
+            "Loop": 65463
+        },
+        {
+            "Filename": "16_Slash_Man.wav",
+            "TrackIndex": 9,
+            "TrimStart": 9833,
+            "TrimEnd": 2200052,
+            "Loop": 362340
+        },
+        {
+            "Filename": "17_Spring_Man.wav",
+            "TrackIndex": 10,
+            "TrimStart": 9464,
+            "TrimEnd": 2282371,
+            "Loop": 30519
+        },
+        {
+            "Filename": "18_Boss.wav",
+            "TrackIndex": 14,
+            "TrimStart": 1091,
+            "TrimEnd": 2409765,
+            "Loop": 644768
+        },
+        {
+            "Filename": "19_Stage_Clear.wav",
+            "TrackIndex": 28,
+            "TrimStart": 4504,
+            "TrimEnd": 213703
+        },
+        {
+            "Filename": "20_Dr_Light_Lab.wav",
+            "TrackIndex": 24,
+            "TrimStart": 5586,
+            "TrimEnd": 755015,
+            "Loop": 112647
+        },
+        {
+            "Filename": "21_New_Weapon.wav",
+            "TrackIndex": 26,
+            "TrimStart": 4942,
+            "TrimEnd": 588711,
+            "Loop": 89912
+        },
+        {
+            "Filename": "22_Auto_Shop.wav",
+            "TrackIndex": 27,
+            "TrimStart": 45389,
+            "TrimEnd": 717718,
+            "Loop": 106825
+        },
+        {
+            "Filename": "23_Remains_of_the_Lab.wav",
+            "TrackIndex": 25,
+            "TrimStart": 8254,
+            "TrimEnd": 2023245,
+            "Loop": 205661
+        },
+        {
+            "Filename": "24_Dr_Wily_Map.wav",
+            "TrackIndex": 32,
+            "TrimStart": 7599,
+            "TrimEnd": 479165
+        },
+        {
+            "Filename": "25_Dr_Wily_1.wav",
+            "TrackIndex": 15,
+            "TrimStart": 12607,
+            "TrimEnd": 3902163,
+            "Loop": 1517508
+        },
+        {
+            "Filename": "26_Dr_Wily_2.wav",
+            "TrackIndex": 16,
+            "TrimStart": 11160,
+            "TrimEnd": 3980665,
+            "Loop": 1126179
+        },
+        {
+            "Filename": "27_Dr_Wily_3.wav",
+            "TrackIndex": 17,
+            "TrimStart": 6420,
+            "TrimEnd": 2638913,
+            "Loop": 254077
+        },
+        {
+            "Filename": "28_Dr_Wily_4.wav",
+            "TrackIndex": 18,
+            "TrimStart": 6348,
+            "TrimEnd": 1470444,
+            "Loop": 44938
+        },
+        {
+            "Filename": "29_Wily_Secret_Weapon.wav",
+            "TrackIndex": 19,
+            "TrimStart": 5342,
+            "TrimEnd": 854968,
+            "Loop": 285793
+        },
+        {
+            "Filename": "30_Dr_Wily_Boss.wav",
+            "TrackIndex": 20,
+            "TrimStart": 8850,
+            "TrimEnd": 1421705,
+            "Loop": 230877
+        },
+        {
+            "Filename": "31_Wily_Defeated.wav",
+            "TrackIndex": 29,
+            "TrimStart": 4011,
+            "TrimEnd": 317009
+        },
+        {
+            "Filename": "32_Staff_Roll.wav",
+            "TrackIndex": 31,
+            "TrimStart": 2944,
+            "TrimEnd": 2776455,
+            "Loop": 336797
+        },
+        {
+            "Filename": "33_Enter_the_Graveyard.wav",
+            "TrackIndex": 36,
+            "TrimStart": 4900,
+            "TrimEnd": 409533
+        },
+        {
+            "Filename": "34_The_Haunted_Graveyard.wav",
+            "TrackIndex": 35,
+            "TrimStart": 8260,
+            "TrimEnd": 3552572,
+            "Loop": 721848
+        }
+    ]
+}
