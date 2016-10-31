@@ -82,6 +82,37 @@ namespace msu1
         sox_effects_chain_t* _chain;
     };
 
+    struct SoxEffectWrapper
+    {
+        SoxEffectWrapper(sox_effect_t* effect)
+        : _effect(effect)
+        {}
+
+        SoxEffectWrapper(SoxEffectWrapper&& move)
+            : _effect(move._effect)
+        {
+            move._effect = nullptr;
+        }
+
+        ~SoxEffectWrapper()
+        {
+            free(_effect);
+        }
+
+        operator sox_effect_t*()
+        {
+            return _effect;
+        }
+
+    private:
+        sox_effect_t* _effect;
+    };
+
+    SoxEffectWrapper MakeSoxEffect(const char* name)
+    {
+        return SoxEffectWrapper(sox_create_effect(sox_find_effect(name)));
+    }
+
     Builder::Builder()
     {
     }
@@ -93,6 +124,21 @@ namespace msu1
 
     void Builder::Build()
     {
+        // NOTE: Ideally I would have use a memory stream but SoX doesn't support it on Windows MSVC
+        sprintf(_tempWavFilename, "%s-%d.wav", _info.OutputPrefix().c_str(), _info.TrackIndex());
+
+        doSoxProcess();
+
+        writeMSUFile();
+
+        if (!_info.KeepWav())
+        {
+            remove(_tempWavFilename);
+        }
+    }
+
+    void Builder::doSoxProcess()
+    {
         sox_effect_t* effect = nullptr;
         char* args[2];
 
@@ -102,52 +148,47 @@ namespace msu1
             return;
         }
 
-        sox_format_t* memOutFormat = new sox_format_t;
-        memcpy(memOutFormat, fileIn, sizeof(sox_format_t));
+        sox_format_t* tempFileOutFormat = new sox_format_t;
+        memcpy(tempFileOutFormat, fileIn, sizeof(sox_format_t));
 
-        memOutFormat->signal.rate = 44100;
-        memOutFormat->signal.channels = 2;
-        memOutFormat->signal.precision = 16;
-        memOutFormat->signal.length = SOX_UNSPEC;
+        tempFileOutFormat->signal.rate = 44100;
+        tempFileOutFormat->signal.channels = 2;
+        tempFileOutFormat->signal.precision = 16;
+        tempFileOutFormat->signal.length = SOX_UNSPEC;
 
-        // NOTE: Ideally I would have use a memory stream but SoX doesn't support it on Windows MSVC
-        char tempWavFilename[1024];
-        sprintf(tempWavFilename, "%s-%d.wav", _info.OutputPrefix().c_str(), _info.TrackIndex());
+        auto tempFileOut = SoxFormatWrapper(sox_open_write(_tempWavFilename, &tempFileOutFormat->signal, nullptr, "wav", nullptr, nullptr));
 
-        auto memOut = SoxFormatWrapper(sox_open_write(tempWavFilename, &memOutFormat->signal, nullptr, "wav", nullptr, nullptr));
-
-        if (!memOut)
+        if (!tempFileOut)
         {
             return;
         }
 
-        auto chain = SoxChainWrapper(sox_create_effects_chain(&fileIn->encoding, &memOut->encoding));
+        auto chain = SoxChainWrapper(sox_create_effects_chain(&fileIn->encoding, &tempFileOut->encoding));
 
-        effect = sox_create_effect(sox_find_effect("input"));
-        args[0] = reinterpret_cast<char*>((sox_format_t*)fileIn);
-        sox_effect_options(effect, 1, args);
-        sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
-        free(effect);
-
-        if (fileIn->signal.rate != memOut->signal.rate)
         {
-            effect = sox_create_effect(sox_find_effect("rate"));
-            sox_effect_options(effect, 0, nullptr);
-            sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
-            free(effect);
+            auto effect = MakeSoxEffect("input");
+            args[0] = reinterpret_cast<char*>((sox_format_t*)fileIn);
+            sox_effect_options(effect, 1, args);
+            sox_add_effect(chain, effect, &fileIn->signal, &tempFileOut->signal);
         }
 
-        if (fileIn->signal.channels != memOut->signal.channels)
+        if (fileIn->signal.rate != tempFileOut->signal.rate)
         {
-            effect = sox_create_effect(sox_find_effect("channels"));
+            auto effect = MakeSoxEffect("rate");
             sox_effect_options(effect, 0, nullptr);
-            sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
-            free(effect);
+            sox_add_effect(chain, effect, &fileIn->signal, &tempFileOut->signal);
+        }
+
+        if (fileIn->signal.channels != tempFileOut->signal.channels)
+        {
+            auto effect = MakeSoxEffect("channels");
+            sox_effect_options(effect, 0, nullptr);
+            sox_add_effect(chain, effect, &fileIn->signal, &tempFileOut->signal);
         }
 
         if (_info.TrimStart().HasValue() || _info.TrimEnd().HasValue())
         {
-            effect = sox_create_effect(sox_find_effect("trim"));
+            auto effect = MakeSoxEffect("trim");
 
             std::vector<char*> trimParameters;
 
@@ -163,40 +204,40 @@ namespace msu1
 
             sox_effect_options(effect, trimParameters.size(), trimParameters.data());
 
-            sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
-
-            free(effect);
+            sox_add_effect(chain, effect, &fileIn->signal, &tempFileOut->signal);
         }
 
         if (_info.Normalization() != 0)
         {
-            effect = sox_create_effect(sox_find_effect("nongnunormalize"));
+            auto effect = MakeSoxEffect("nongnunormalize");
             args[0] = Baroque::RawStringFormat("%d", _info.Normalization());
             sox_effect_options(effect, 1, args);
-            sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
-
-            free(effect);
+            sox_add_effect(chain, effect, &fileIn->signal, &tempFileOut->signal);
         }
 
         if (_info.UseDithering())
         {
-            effect = sox_create_effect(sox_find_effect("dither"));
+            auto effect = MakeSoxEffect("dither");
             args[0] = "-s";
             sox_effect_options(effect, 1, args);
-            sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
+            sox_add_effect(chain, effect, &fileIn->signal, &tempFileOut->signal);
         }
 
-        effect = sox_create_effect(sox_find_effect("output"));
-        args[0] = reinterpret_cast<char*>((sox_format_t*)memOut);
-        sox_effect_options(effect, 1, args);
-        sox_add_effect(chain, effect, &fileIn->signal, &memOut->signal);
-        free(effect);
+        {
+            auto effect = MakeSoxEffect("output");
+            args[0] = reinterpret_cast<char*>((sox_format_t*)tempFileOut);
+            sox_effect_options(effect, 1, args);
+            sox_add_effect(chain, effect, &fileIn->signal, &tempFileOut->signal);
+        }
 
         sox_flow_effects(chain, nullptr, nullptr);
+    }
 
+    void Builder::writeMSUFile()
+    {
         sox_sample_t rawSamples[BufferSize];
 
-        auto memIn = SoxFormatWrapper(sox_open_read(tempWavFilename, nullptr, nullptr, nullptr));
+        auto memIn = SoxFormatWrapper(sox_open_read(_tempWavFilename, nullptr, nullptr, nullptr));
 
         if (!memIn)
         {
@@ -228,16 +269,11 @@ namespace msu1
                     SOX_SAMPLE_LOCALS;
                     int clips = 0;
 
-                    samples[i] = SOX_SAMPLE_TO_SIGNED_16BIT(rawSamples[i],clips);
+                    samples[i] = SOX_SAMPLE_TO_SIGNED_16BIT(rawSamples[i], clips);
                 }
 
                 fwrite(samples, sizeof(int16_t), samplesRead, outputFile);
             }
-        }
-
-        if (!_info.KeepWav())
-        {
-            remove(tempWavFilename);
         }
     }
 }

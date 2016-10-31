@@ -40,6 +40,11 @@ namespace msu1
         void Build();
 
     private:
+        void doSoxProcess();
+        void writeMSUFile();
+
+    private:
         BuildInfo _info;
+        char _tempWavFilename[1024];
     };
 }

@@ -72,7 +72,7 @@ int main(int argc, char** argv)
             msu1::BuildInfo trackBuildInfo;
             trackBuildInfo.SetGlobalSettings(batchConfigFile.GlobalSettings());
             trackBuildInfo.SetTrackSettings(track);
-            trackBuildInfo.SetKeepWav(true);
+            trackBuildInfo.SetKeepWav(false);
 
             msu1::Builder builder(trackBuildInfo);
             builder.Build();
